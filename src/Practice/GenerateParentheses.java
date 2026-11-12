@@ -33,6 +33,7 @@ public class GenerateParentheses {
 		app.result = new ArrayList<>();
 		app.backtrack(0, 0, "", 3);
 		System.out.println(app.result);
+	
 		
 		
 	}

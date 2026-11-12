@@ -1,0 +1,1132 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Ôn thi SW Test</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: thanh tab dính trên cùng, mỗi tab là một chủ đề; trong tab là các "thẻ template" gồm mô tả ngắn, code Java, và hộp mẹo/bẫy. */
+:root {
+  --bg: #f5f6f3;
+  --panel: #ffffff;
+  --fg: #1c2326;
+  --muted: #5d6b70;
+  --line: #d9dfdb;
+  --accent: #0b6e7f;
+  --accent-soft: #dcefef;
+  --code-bg: #eef1ee;
+  --code-fg: #1d2a2e;
+  --code-cmt: #6a7d83;
+  --code-kw: #0b6e7f;
+  --code-num: #a2481c;
+  --tip: #e5f1e2;
+  --tip-line: #3f8a3a;
+  --trap: #fbe9e4;
+  --trap-line: #c4452b;
+  --f-display: "Bricolage Grotesque", "Segoe UI", sans-serif;
+  --f-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f1517; --panel: #162023; --fg: #e3eaea; --muted: #94a5a9; --line: #27363a;
+    --accent: #4fc3d4; --accent-soft: #15353b;
+    --code-bg: #0c1214; --code-fg: #d5e2e3; --code-cmt: #70878d; --code-kw: #4fc3d4; --code-num: #f0a57a;
+    --tip: #17301a; --tip-line: #6fc067; --trap: #38201b; --trap-line: #ee7c64;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f1517; --panel: #162023; --fg: #e3eaea; --muted: #94a5a9; --line: #27363a;
+  --accent: #4fc3d4; --accent-soft: #15353b;
+  --code-bg: #0c1214; --code-fg: #d5e2e3; --code-cmt: #70878d; --code-kw: #4fc3d4; --code-num: #f0a57a;
+  --tip: #17301a; --tip-line: #6fc067; --trap: #38201b; --trap-line: #ee7c64;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--fg); font-family: var(--f-body); font-size: 15px; line-height: 1.6; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.wrap { max-width: 920px; margin: 0 auto; padding-block: 24px 64px; }
+header h1 { font-family: var(--f-display); font-weight: 800; font-size: clamp(30px, 6vw, 46px); line-height: 1.05; margin: 0 0 8px; text-wrap: balance; }
+header p { color: var(--muted); margin: 0; max-width: 62ch; }
+nav { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: var(--bg); border-bottom: 1px solid var(--line); margin-top: 20px; display: flex; gap: 4px; overflow-x: auto; padding-block: 8px; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 30; background: var(--bg); }
+nav a { flex: none; padding: 7px 14px; border-radius: 999px; color: var(--muted); text-decoration: none; font-weight: 500; font-size: 14px; border: 1px solid transparent; }
+nav a:hover { color: var(--fg); }
+nav a[aria-current="true"] { background: var(--accent); color: var(--bg); }
+nav a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+section[hidden] { display: none; }
+h2 { font-family: var(--f-display); font-weight: 800; font-size: 28px; margin: 32px 0 4px; text-wrap: balance; }
+.lead { color: var(--muted); margin: 0 0 16px; max-width: 64ch; }
+h3 { font-family: var(--f-display); font-weight: 600; font-size: 19px; margin: 0 0 6px; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 18px; margin-block: 16px; min-width: 0; }
+.card > p { margin: 0 0 12px; max-width: 68ch; }
+.tag { display: inline-block; font-family: var(--f-mono); font-size: 11.5px; letter-spacing: .04em; text-transform: uppercase; color: var(--accent); background: var(--accent-soft); padding: 2px 8px; border-radius: 4px; margin-bottom: 6px; }
+.codebox { position: relative; margin-block: 10px; min-width: 0; }
+.codebox pre { margin: 0; background: var(--code-bg); color: var(--code-fg); border-radius: 6px; padding: 14px 14px; overflow-x: auto; font-family: var(--f-mono); font-size: 13px; line-height: 1.55; tab-size: 4; }
+.codebox .ttl { font-family: var(--f-mono); font-size: 11.5px; color: var(--muted); margin-bottom: 4px; }
+.copy { position: absolute; top: 24px; right: 8px; font: 500 12px var(--f-body); background: var(--panel); color: var(--fg); border: 1px solid var(--line); border-radius: 5px; padding: 3px 10px; cursor: pointer; }
+.codebox:not(:has(.ttl)) .copy { top: 8px; }
+.c { color: var(--code-cmt); font-style: italic; }
+.k { color: var(--code-kw); font-weight: 500; }
+.n { color: var(--code-num); }
+.box { border-left: 4px solid; border-radius: 4px; padding: 10px 14px; margin-block: 10px; min-width: 0; }
+.box b.h { display: block; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 2px; }
+.box ul { margin: 4px 0 0; padding-left: 18px; }
+.box li { margin-block: 2px; }
+.tip { background: var(--tip); border-color: var(--tip-line); }
+.tip b.h { color: var(--tip-line); }
+.trap { background: var(--trap); border-color: var(--trap-line); }
+.trap b.h { color: var(--trap-line); }
+.tbl { overflow-x: auto; margin-block: 12px; }
+table { border-collapse: collapse; width: 100%; min-width: 560px; font-size: 14px; background: var(--panel); }
+th, td { text-align: left; padding: 8px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-size: 12px; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); }
+code.i { font-family: var(--f-mono); font-size: 12.5px; background: var(--code-bg); padding: 1px 5px; border-radius: 4px; }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+.grid2 > div { min-width: 0; }
+@media (prefers-reduced-motion: no-preference) { nav a { transition: background .15s, color .15s; } }
+</style>
+
+<div class="wrap">
+<header>
+  <h1>Ôn thi SW Test</h1>
+  <p>Tài liệu ôn tập dựa trên các bài đã làm trong Practice và Samsung. Trọng tâm là BFS, cách mô hình hóa đồ thị và trạng thái; Backtracking chỉ giữ khung cơ bản để nhận diện lúc cần dùng.</p>
+</header>
+
+<nav id="tabs" aria-label="Chủ đề">
+  <a href="#chon" data-t="chon">Chọn thuật toán</a>
+  <a href="#bfs" data-t="bfs">BFS</a>
+  <a href="#dfs" data-t="dfs">DFS</a>
+  <a href="#dequy" data-t="dequy">Đệ quy</a>
+  <a href="#backtrack" data-t="backtrack">Backtrack</a>
+  <a href="#dothi" data-t="dothi">Đồ thị</a>
+  <a href="#meo" data-t="meo">Mẹo thi</a>
+</nav>
+
+<!-- ============== CHỌN THUẬT TOÁN ============== -->
+<section id="s-chon" hidden>
+  <h2>Nhìn đề, chọn gì?</h2>
+  <p class="lead">Đọc dòng cuối của đề (đếm gì, tối ưu gì) trước, rồi đối chiếu bảng này.</p>
+  <div class="tbl"><table>
+    <tr><th>Đề hỏi</th><th>Dùng</th><th>Ví dụ trong thư mục</th></tr>
+    <tr><td>Số bước <b>ít nhất</b> trên lưới / đồ thị không trọng số</td><td>BFS, <code class="i">dist[][]</code></td><td>LeavingOffice, Unicorn</td></tr>
+    <tr><td>Ít nhất, nhưng có <b>trạng thái phụ</b> (chìa khóa, đã nhặt A/B/C)</td><td>BFS, <code class="i">dist[][][state]</code></td><td>LeavingOffice3DimArr, Excalibur</td></tr>
+    <tr><td><b>Sinh</b> hoán vị / tổ hợp hoặc liệt kê lựa chọn, kích thước nhỏ</td><td>DFS + backtrack cơ bản</td><td>PhoneNumber, CombinationSum, CombinationSum2, NQueensII</td></tr>
+    <tr><td>Có bao nhiêu <b>vùng liên thông</b></td><td>DFS / BFS với <code class="i">visited</code> không bỏ</td><td>(flood fill, mục DFS)</td></tr>
+    <tr><td>Tổng lớn nhất khi đi xuống, mỗi ô có vài cách đi tiếp</td><td>Đệ quy + memo (hoặc DP bảng)</td><td>RollABall</td></tr>
+  </table></div>
+  <div class="box tip"><b class="h">Quy tắc nhớ</b>
+    <ul>
+      <li><b>BFS</b> không bao giờ bỏ <code class="i">visited</code>. Mỗi ô/trạng thái vào hàng đợi đúng một lần.</li>
+      <li><b>Backtrack</b> luôn bỏ <code class="i">visited</code> khi quay lui, vì cùng một đỉnh có thể nằm trên nhiều đường khác nhau.</li>
+      <li>Nếu cả hai đều làm được, BFS cho "ngắn nhất" nhanh hơn nhiều, backtrack chỉ nên dùng khi đề cần <b>liệt kê / đếm</b> hoặc kích thước rất nhỏ (N ≤ 10–20).</li>
+    </ul>
+  </div>
+  <h3 style="margin-top:24px">Ước lượng độ phức tạp trước khi code</h3>
+  <div class="tbl"><table>
+    <tr><th>Thuật toán</th><th>Độ phức tạp</th><th>Chịu được tới</th></tr>
+    <tr><td>BFS lưới N×M</td><td>O(N·M)</td><td>N, M ~ 1000</td></tr>
+    <tr><td>BFS có mask 3 bit</td><td>O(N·M·8)</td><td>N, M ~ 500</td></tr>
+    <tr><td>Backtrack hoán vị</td><td>O(n!)</td><td>n ≤ 10</td></tr>
+    <tr><td>Backtrack chọn/không chọn</td><td>O(2ⁿ)</td><td>n ≤ 20–25</td></tr>
+    <tr><td>Backtrack k nhánh, sâu D</td><td>O(kᴰ)</td><td>Chỉ dùng khi giới hạn nhỏ</td></tr>
+  </table></div>
+</section>
+
+<!-- ============== BFS ============== -->
+<section id="s-bfs" hidden>
+  <h2>BFS</h2>
+  <p class="lead">Duyệt theo lớp. Lần đầu chạm đích luôn là đường ngắn nhất, nên không cần backtrack, không cần bỏ <code class="i">visited</code>.</p>
+
+  <div class="card">
+    <span class="tag">Template 1</span>
+    <h3>BFS lưới với dist[][]</h3>
+    <p>Dùng cho: đường ngắn nhất trên lưới có tường. <code class="i">dist[x][y] == -1</code> vừa là "chưa thăm" vừa là "không tới được".</p>
+<script type="text/plain" data-title="BFS2D.java">
+static int[] dx = {-1, 0, 0, 1};
+static int[] dy = {0, -1, 1, 0};
+
+// trả về dist của toàn bản đồ, -1 = không tới được
+static int[][] bfs(char[][] map, int sx, int sy) {
+    int N = map.length, M = map[0].length;
+    int[][] dist = new int[N][M];
+    for (int[] row : dist) Arrays.fill(row, -1);
+
+    Queue<int[]> q = new LinkedList<>();
+    q.offer(new int[]{sx, sy});
+    dist[sx][sy] = 0;                         // đánh dấu NGAY khi push
+
+    while (!q.isEmpty()) {
+        int[] cur = q.poll();
+        int x = cur[0], y = cur[1];
+        for (int k = 0; k < 4; k++) {
+            int nx = x + dx[k], ny = y + dy[k];
+            if (nx < 0 || nx >= N || ny < 0 || ny >= M) continue; // 1. ra ngoài biên
+            if (map[nx][ny] == 'X') continue;                     // 2. vật cản
+            if (dist[nx][ny] != -1) continue;                     // 3. đã thăm
+            dist[nx][ny] = dist[x][y] + 1;
+            q.offer(new int[]{nx, ny});
+        }
+    }
+    return dist;
+}
+// dùng: int ans = bfs(map, sx, sy)[ex][ey];
+</script>
+    <div class="box trap"><b class="h">Bẫy</b>
+      <ul>
+        <li>Đánh dấu <code class="i">dist</code> lúc <b>push</b>, không phải lúc poll. Đánh dấu lúc poll làm một ô bị push nhiều lần, chậm và dễ sai.</li>
+        <li>Đề cho tọa độ từ 1 thì trừ 1 khi đọc (<code class="i">R - 1</code>).</li>
+        <li>Quên chuyển <code class="i">dist</code> của ô xuất phát về 0 thì mọi thứ lệch.</li>
+        <li>Muốn dừng sớm: <code class="i">if (x == ex &amp;&amp; y == ey) return dist[x][y];</code> ngay sau poll.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <span class="tag">Template 2</span>
+    <h3>BFS có trạng thái: dist[x][y][state]</h3>
+    <p>Dùng khi cùng một ô nhưng "mang theo" thứ khác nhau thì kết quả khác nhau (có chìa hay chưa, đã nhặt những vật nào). Mỗi cặp (ô, trạng thái) là một đỉnh riêng của đồ thị.</p>
+<script type="text/plain" data-title="BFS3D_key.java — 1 chìa khóa (state = 0/1)">
+static int[] dr = {-1, 0, 0, 1};
+static int[] dc = {0, -1, 1, 0};
+
+// 'X' tường, 'A' cửa (cần chìa), 'a' chìa, 'O' lối ra
+static int bfs(char[][] map, int sr, int sc) {
+    int N = map.length, M = map[0].length;
+    int[][][] dist = new int[N][M][2];                  // [..][..][hasKey]
+    for (int[][] a : dist) for (int[] b : a) Arrays.fill(b, -1);
+
+    int startKey = (map[sr][sc] == 'a') ? 1 : 0;        // nhặt luôn nếu đứng sẵn trên chìa
+    dist[sr][sc][startKey] = 0;
+    Queue<int[]> q = new LinkedList<>();
+    q.offer(new int[]{sr, sc, startKey});
+
+    while (!q.isEmpty()) {
+        int[] cur = q.poll();
+        int r = cur[0], c = cur[1], key = cur[2];
+        int d = dist[r][c][key];
+        if (map[r][c] == 'O') return d;                 // lần đầu tới đích là ngắn nhất
+
+        for (int k = 0; k < 4; k++) {
+            int nr = r + dr[k], nc = c + dc[k];
+            if (nr < 0 || nr >= N || nc < 0 || nc >= M) continue;
+            if (map[nr][nc] == 'X') continue;
+            if (map[nr][nc] == 'A' &amp;&amp; key == 0) continue;     // ràng buộc phụ thuộc state
+            int nk = (key == 1 || map[nr][nc] == 'a') ? 1 : 0;   // chuyển state
+            if (dist[nr][nc][nk] != -1) continue;
+            dist[nr][nc][nk] = d + 1;
+            q.offer(new int[]{nr, nc, nk});
+        }
+    }
+    return -1;
+}
+</script>
+<script type="text/plain" data-title="BFS3D_mask.java — nhặt A, B, C rồi mới tới S (state = bitmask 0..7)">
+static int bit(char ch) {              // A=001, B=010, C=100, còn lại 0
+    if (ch == 'A') return 1;
+    if (ch == 'B') return 2;
+    if (ch == 'C') return 4;
+    return 0;
+}
+static final int FULL = 7;             // (1 &lt;&lt; 3) - 1
+
+// dist = new int[N][M][8], fill -1
+int startMask = bit(map[sr][sc]);
+dist[sr][sc][startMask] = 0;
+q.offer(new int[]{sr, sc, startMask});
+
+while (!q.isEmpty()) {
+    int[] cur = q.poll();
+    int r = cur[0], c = cur[1], mask = cur[2];
+    int d = dist[r][c][mask];
+    if (map[r][c] == 'S' &amp;&amp; mask == FULL) return d;   // đích đòi ĐỦ trạng thái
+
+    for (int k = 0; k < 4; k++) {
+        int nr = r + dr[k], nc = c + dc[k];
+        if (nr < 0 || nr >= N || nc < 0 || nc >= M) continue;
+        if (map[nr][nc] == 'X' &amp;&amp; mask != FULL) continue;  // có Excalibur mới qua núi
+        int nm = mask | bit(map[nr][nc]);                  // OR để "nhặt thêm"
+        if (dist[nr][nc][nm] != -1) continue;
+        dist[nr][nc][nm] = d + 1;
+        q.offer(new int[]{nr, nc, nm});
+    }
+}
+return -1;
+</script>
+    <div class="box tip"><b class="h">Mẹo</b>
+      <ul>
+        <li>Muốn chắc bài là "BFS có trạng thái": tự hỏi "hai lần đứng cùng một ô, có lần nào được đi những chỗ mà lần kia không?". Có thì cần thêm chiều.</li>
+        <li>Kích thước chiều state: 2 (có/không), 2ᵏ (k vật phẩm), hoặc số lần được phá tường (0..K).</li>
+        <li>Điều kiện đích gồm <b>cả vị trí và state</b>: <code class="i">map[r][c]=='S' &amp;&amp; mask==FULL</code>. Đứng ở S khi chưa đủ đồ thì vẫn đi tiếp bình thường.</li>
+        <li>Với chìa khóa duy nhất, có cách thay thế không cần chiều thứ 3: xem Template 4 (hai lần BFS).</li>
+      </ul>
+    </div>
+    <div class="box trap"><b class="h">Bẫy</b>
+      <ul>
+        <li>Quên nhặt đồ ở <b>ô xuất phát</b>: nếu start đứng trên <code class="i">'a'</code> mà để <code class="i">state = 0</code> thì kết quả sai. Luôn khởi tạo state từ <code class="i">map[sr][sc]</code>.</li>
+        <li>Quên chiều state trong <code class="i">dist</code>: <code class="i">dist[nr][nc]</code> thay vì <code class="i">dist[nr][nc][nk]</code> cho ra đáp án sai nhưng không báo lỗi.</li>
+        <li>Dùng <code class="i">nk</code> (state mới) khi kiểm tra đã thăm và gán dist, không phải <code class="i">key</code> (state cũ).</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <span class="tag">Template 3</span>
+    <h3>BFS với bộ nước đi tuỳ ý (mã, unicorn, nhảy xa)</h3>
+    <p>Chỉ thay mảng hướng đi. Phần còn lại giống Template 1.</p>
+<script type="text/plain" data-title="MoveSet.java">
+int[] kr = {-2, -2, -1, -1, 1, 1, 2, 2};
+int[] kc = {-1,  1, -2,  2, -2, 2, -1, 1};
+
+// Unicorn: nhân nước đi của mã với 1, 2, 3 (nhảy thẳng hàng tối đa 3 bước)
+List<Integer> ur = new ArrayList<>(), uc = new ArrayList<>();
+for (int m = 1; m <= 3; m++)
+    for (int i = 0; i < 8; i++) { ur.add(kr[i] * m); uc.add(kc[i] * m); }
+
+// vòng lặp for (int k = 0; k < ur.size(); k++) { nr = r + ur.get(k); ... }
+</script>
+    <div class="box trap"><b class="h">Bẫy</b>
+      <ul>
+        <li>Nếu start trùng đích, BFS chuẩn ở trên trả về -1 (vì không bao giờ kiểm tra ô đầu). Thêm <code class="i">if (sr == er &amp;&amp; sc == ec) return 0;</code> đầu hàm.</li>
+        <li>Hiệu hai kết quả BFS (<code class="i">knight - unicorn</code>) vô nghĩa nếu một trong hai là -1. Xử lý trước.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <span class="tag">Template 4</span>
+    <h3>Ghép hai lần BFS thay cho chiều state</h3>
+    <p>Khi chỉ cần đi qua <b>đúng một điểm trung gian</b> (một chìa) trước khi tới đích. Chạy BFS từ start và BFS từ đích, rồi duyệt mọi ô trung gian và lấy <code class="i">distS + distE</code> nhỏ nhất. Cách này đúng vì đường đi hai chiều như nhau.</p>
+<script type="text/plain" data-title="TwoBFS.java">
+int[][] distS = bfs(map, sx, sy, /*canPassDoor=*/ false);  // từ start, chưa có chìa
+int[][] distE = bfs(map, ex, ey, /*canPassDoor=*/ true);   // từ exit, đã có chìa
+
+int result = distS[ex][ey];                                // cách 1: không cần chìa
+for (int i = 0; i < N; i++)
+    for (int j = 0; j < M; j++)
+        if (map[i][j] == 'a' &amp;&amp; distS[i][j] != -1 &amp;&amp; distE[i][j] != -1) {
+            int total = distS[i][j] + distE[i][j];         // start -> chìa -> exit
+            if (result == -1 || total < result) result = total;
+        }
+</script>
+  </div>
+
+  <div class="card">
+    <span class="tag">Template 5</span>
+    <h3>Multi-source BFS</h3>
+    <p>Nhiều nguồn cùng lan ra một lúc (cháy lan, nước loang, khoảng cách tới điểm gần nhất): push tất cả nguồn với dist 0 trước vòng lặp.</p>
+<script type="text/plain" data-title="MultiSource.java">
+for (int i = 0; i < N; i++)
+    for (int j = 0; j < M; j++)
+        if (map[i][j] == 'F') {            // mọi nguồn
+            dist[i][j] = 0;
+            q.offer(new int[]{i, j});
+        }
+// phần còn lại y hệt Template 1
+</script>
+  </div>
+
+  <div class="card">
+    <span class="tag">Template 6</span>
+    <h3>BFS trên đồ thị danh sách kề</h3>
+<script type="text/plain" data-title="BFSGraph.java">
+static int[] bfs(List<Integer>[] adj, int n, int start) {
+    int[] dist = new int[n + 1];                 // đỉnh đánh số 1..n
+    Arrays.fill(dist, -1);
+    Queue<Integer> q = new LinkedList<>();
+    q.offer(start);
+    dist[start] = 0;
+    while (!q.isEmpty()) {
+        int u = q.poll();
+        for (int v : adj[u]) {
+            if (dist[v] != -1) continue;
+            dist[v] = dist[u] + 1;
+            q.offer(v);
+        }
+    }
+    return dist;
+}
+</script>
+    <div class="box tip"><b class="h">Có trọng số?</b>
+      <ul>
+        <li>Mọi cạnh cùng trọng số: BFS là đủ, nhân với trọng số.</li>
+        <li>Trọng số chỉ 0 hoặc 1: 0-1 BFS (deque, cạnh 0 <code class="i">addFirst</code>, cạnh 1 <code class="i">addLast</code>).</li>
+        <li>Trọng số bất kỳ ≥ 0: Dijkstra với <code class="i">PriorityQueue&lt;int[]&gt;</code> theo dist.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <span class="tag">Nhận dạng bài đã làm</span>
+    <h3>Chọn đúng biến thể BFS</h3>
+    <div class="tbl"><table>
+      <tr><th>Dạng bài</th><th>Mô hình / trạng thái</th><th>Bài liên hệ</th></tr>
+      <tr><td>Đường ngắn nhất trên mê cung, mỗi bước cùng giá</td><td>Đỉnh là ô (r,c), cạnh nối các ô đi được; <code class="i">dist[r][c]</code></td><td>BOJ 2178 (đếm cả ô đầu và cuối), ThirdAvenue</td></tr>
+      <tr><td>Nhiều nguồn lan đồng thời</td><td>Đưa tất cả nguồn vào queue với dist = 0</td><td>BOJ 7576 (cà chua), Monsters (thời điểm quái tới)</td></tr>
+      <tr><td>Được phá tường tối đa K lần</td><td>Trạng thái là <code class="i">(r,c,đã phá)</code>; dist có chiều K+1</td><td>BOJ 2206; BOJ 16933 cần thêm ngày/đêm</td></tr>
+      <tr><td>Đã nhặt chìa/vật phẩm ảnh hưởng lối đi</td><td><code class="i">(r,c,mask)</code>, mask cập nhật bằng OR</td><td>LeavingOffice3DimArr, Excalibur</td></tr>
+      <tr><td>Cạnh tiếp theo bị cấm theo ba đỉnh liên tiếp</td><td><code class="i">(đỉnh trước, đỉnh hiện tại)</code>; lựa chọn kế tiếp phụ thuộc cả hai</td><td>Practice/ShortestPath</td></tr>
+      <tr><td>Nước đi đặc biệt hoặc dịch chuyển</td><td>Mỗi nước đi hợp lệ là một cạnh; teleport cùng chữ là cạnh chi phí 1</td><td>Unicorn, ThirdAvenue</td></tr>
+      <tr><td>Ô trong bán kính năng lượng</td><td>Cạnh nối hai ô nếu khoảng cách Manhattan ≤ k</td><td>OlyaAndEnergyDrinks (bản nguồn còn TODO)</td></tr>
+      <tr><td>Đếm số ô tới được</td><td>Flood fill, không nhất thiết lưu khoảng cách</td><td>BOJ 16234 (tìm các liên minh mỗi ngày), Pixel</td></tr>
+      <tr><td>Đi trái có phí 1, các hướng khác phí 0</td><td>0–1 BFS bằng deque</td><td>Labyrinth (giới hạn số lần đi trái/phải)</td></tr>
+    </table></div>
+    <div class="box tip"><b class="h">Câu hỏi cốt lõi</b>
+      Nếu hai lần đến cùng một ô nhưng quyền đi tiếp hoặc đáp án tương lai có thể khác nhau, ô đó chưa mô tả đủ trạng thái. Thêm phần thông tin làm hai trường hợp phân biệt được vào state và vào mảng <code class="i">dist</code>.
+    </div>
+  </div>
+
+  <div class="card">
+    <span class="tag">Khoảng cách</span>
+    <h3>Đếm cạnh hay đếm ô?</h3>
+    <p>BFS thường đặt <code class="i">dist[start] = 0</code>, vì khoảng cách là số cạnh đã đi. Một số đề hỏi số ô trên đường, khi đó kết quả là <code class="i">dist[đích] + 1</code> (nếu đích tới được), hoặc có thể khởi tạo start bằng 1.</p>
+    <div class="box trap"><b class="h">Bẫy ở bài lưới</b>
+      <ul>
+        <li>BOJ 2178 tính cả ô đầu và ô cuối. Đừng nhầm với BFS chuẩn đếm số lần di chuyển.</li>
+        <li>Kiểm tra start là đích trước vòng lặp nếu hàm chỉ kiểm tra đích sau khi đi sang ô kế tiếp.</li>
+        <li>Thăm một trạng thái khi enqueue: cùng một trạng thái chỉ cần vào queue một lần.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <span class="tag">Truy vết</span>
+    <h3>Lưu lại đường đi ngắn nhất</h3>
+    <p>Độ dài chỉ cho biết cần bao nhiêu bước. Muốn in chính các ô/đỉnh trên đường đi, lưu trạng thái cha mỗi lần phát hiện một trạng thái mới. Với BFS thường, phát hiện lần đầu đã là ngắn nhất vì queue xử lý theo lớp.</p>
+<script type="text/plain" data-title="BFSPath.java — giả sử start=(sr,sc), end=(er,ec)">
+// n, m: số hàng/cột; sr, sc: tọa độ bắt đầu; er, ec: tọa độ đích.
+// r, c là ô hiện tại đang poll; nr, nc là ô hàng xóm vừa tìm thấy.
+int[][] parentR = new int[n][m];
+int[][] parentC = new int[n][m];
+for (int r = 0; r < n; r++) {
+    Arrays.fill(parentR[r], -1);
+    Arrays.fill(parentC[r], -1);
+}
+// Khi vừa phát hiện (nr,nc):
+dist[nr][nc] = dist[r][c] + 1;
+parentR[nr][nc] = r;
+parentC[nr][nc] = c;
+q.offer(new int[]{nr, nc});
+
+// Chỉ truy vết nếu dist[er][ec] != -1.
+// Lần ngược từ đích; parent của start vẫn là (-1,-1).
+List<int[]> path = new ArrayList<>();
+for (int r = er, c = ec; r != -1; ) {
+    path.add(new int[]{r, c});
+    int pr = parentR[r][c], pc = parentC[r][c];
+    r = pr; c = pc;
+}
+Collections.reverse(path);
+// path lúc này là start -> ... -> end.
+</script>
+    <div class="box tip"><b class="h">Quy trình tổng quát</b>
+      <ol>
+        <li>Tạo mảng cha cùng kích thước với dist; khởi tạo bằng -1. Start không có cha.</li>
+        <li>Khi enqueue trạng thái mới, gán cha của nó bằng trạng thái hiện tại. Gán đúng lúc đánh dấu đã thăm.</li>
+        <li>Nếu đích không tới được, dừng và xử lý theo đề; không chạy truy vết.</li>
+        <li>Từ đích lần ngược cha tới start, thêm từng phần tử vào list rồi đảo list.</li>
+        <li>Nếu đề cần chuỗi lệnh, lưu hướng đi cùng lúc gán cha; lúc truy ngược cũng đảo chuỗi hướng.</li>
+      </ol>
+    </div>
+    <div class="box trap"><b class="h">Nếu BFS có state</b>
+      Cha phải xác định đầy đủ trạng thái trước, ví dụ <code class="i">(r,c,key)</code> hoặc <code class="i">(u,v)</code>. Chỉ lưu tọa độ/đỉnh sẽ làm mất thông tin khi một vị trí được đến với nhiều state khác nhau.
+    </div>
+  </div>
+
+  <div class="card">
+    <span class="tag">Bài tiêu biểu · <a href="../Practice/Monsters.java">Practice/Monsters.java</a></span>
+    <h3>Monsters: tìm đường thoát an toàn và in đường đi</h3>
+    <p>Bài này ghép hai BFS vì quái vật cũng di chuyển. Trước hết tính thời điểm sớm nhất quái vật tới từng ô; sau đó BFS của người chơi chỉ được bước vào ô mà người chơi tới sớm hơn quái vật.</p>
+    <div class="tbl"><table>
+      <tr><th>Bước</th><th>Việc làm trong source</th><th>Lý do</th></tr>
+      <tr><td>1. Khởi tạo thời gian</td><td><code class="i">monsterTime[][]</code> và <code class="i">playerTime[][]</code> điền <code class="i">INF</code>.</td><td>INF nghĩa là ô chưa thể tới được.</td></tr>
+      <tr><td>2. BFS nhiều nguồn cho quái</td><td>Đưa mọi vị trí M vào queue, gán thời điểm 0. Mỗi ô trống nhận <code class="i">t + 1</code> từ ô kề.</td><td>Queue chung mô phỏng các quái bắt đầu lan cùng lúc; lần đầu tới là thời gian sớm nhất.</td></tr>
+      <tr><td>3. BFS cho người chơi</td><td>Bắt đầu A với thời gian 0; bỏ tường, ô đã tới và ô không an toàn.</td><td>Ô kế tiếp chỉ hợp lệ khi <code class="i">t + 1 &lt; monsterTime[nr][nc]</code>. Bằng nhau cũng thua vì cả hai tới đồng thời.</td></tr>
+      <tr><td>4. Nhận diện lối thoát</td><td>Khi lấy ô ra khỏi queue, nếu nằm trên biên thì gọi <code class="i">printPath</code>.</td><td>BFS đảm bảo đây là lối thoát an toàn ít bước nhất.</td></tr>
+      <tr><td>5. Lưu cha và hướng</td><td>Khi enqueue ô mới, lưu <code class="i">parentR/C[nr][nc]</code> và <code class="i">direction[nr][nc] = move[k]</code>.</td><td>Hướng lưu là hướng đi từ cha tới ô con.</td></tr>
+      <tr><td>6. Dựng kết quả</td><td>Từ ô biên lần ngược cha về A, nối các hướng rồi <code class="i">reverse()</code>.</td><td>Đi ngược cha cho chuỗi ngược chiều; đảo lại để in từ A ra ngoài.</td></tr>
+    </table></div>
+    <div class="box tip"><b class="h">Áp dụng lại</b>
+      Cùng mẫu dùng được cho lửa/nước/quái lan: BFS nguồn nguy hiểm trước, BFS người/đối tượng sau với điều kiện thời gian an toàn. Nếu không có nguồn nguy hiểm tới một ô, <code class="i">monsterTime</code> vẫn là INF nên ô đó an toàn theo điều kiện thời gian.
+    </div>
+    <div class="box trap"><b class="h">Kiểm tra biên</b>
+      Source kiểm tra A có nằm sẵn ở biên ngay khi poll; khi đó đường hợp lệ có độ dài 0. Mọi mảng thời gian và mảng cha cần khởi tạo lại cho từng test case.
+    </div>
+  </div>
+
+  <div class="card">
+    <span class="tag">0–1 BFS</span>
+    <h3>Khi cạnh chỉ có trọng số 0 hoặc 1</h3>
+    <p>0–1 BFS tìm tổng chi phí nhỏ nhất khi mỗi cạnh có chi phí 0 hoặc 1. Thay vì FIFO thuần, dùng deque: cạnh 0 đưa trạng thái lên đầu, cạnh 1 đưa xuống cuối. Đây là lựa chọn giữa BFS thường và Dijkstra.</p>
+<script type="text/plain" data-title="ZeroOneBFS.java">
+int[] dist = new int[n];
+Arrays.fill(dist, Integer.MAX_VALUE);
+Deque<Integer> dq = new ArrayDeque<>();
+dist[start] = 0;
+dq.offerFirst(start);
+while (!dq.isEmpty()) {
+    int u = dq.pollFirst();
+    for (Edge e : adj[u]) {          // e.weight chỉ là 0 hoặc 1
+        int nd = dist[u] + e.weight;
+        if (nd >= dist[e.to]) continue;
+        dist[e.to] = nd;
+        if (e.weight == 0) dq.offerFirst(e.to);
+        else dq.offerLast(e.to);
+    }
+}
+</script>
+    <div class="box tip"><b class="h">Cách hình dung</b>
+      Nếu đi qua cạnh 0, khoảng cách không tăng nên trạng thái đó cần được xét sớm như thể vẫn ở lớp hiện tại. Cạnh 1 tăng chi phí một đơn vị nên được xếp sau. Điều kiện <code class="i">nd &lt; dist[v]</code> là phép nới lỏng: một đỉnh có thể được cải thiện và đưa vào deque lại.
+    </div>
+    <div class="box tip"><b class="h">Liên hệ Labyrinth</b>
+      Trong <a href="../Practice/Labyrinth.java">Practice/Labyrinth.java</a>, đi trái tốn 1 lần; lên, xuống, phải tốn 0 lần trong đại lượng <code class="i">left[][]</code>. Chạy 0–1 BFS để tìm số lần đi trái nhỏ nhất tới từng ô. Từ tọa độ cuối, số lần đi phải được suy ra là <code class="i">left + (c - startC)</code>, vì độ dời ngang bằng số lần sang phải trừ số lần sang trái.
+    </div>
+    <div class="box trap"><b class="h">Đừng dùng visited cố định</b>
+      Trong BFS thường, lần đầu tới đã ngắn nhất. Với 0–1 BFS, một đường mới có thể làm dist nhỏ hơn, vì vậy điều kiện đúng là bỏ qua khi <code class="i">nd &gt;= dist[v]</code> và cập nhật cha/dist khi tìm được đường tốt hơn.
+    </div>
+    <div class="box tip"><b class="h">Truy vết với 0–1 BFS</b>
+      Gán <code class="i">parent[v] = u</code> mỗi khi <code class="i">nd &lt; dist[v]</code>, cùng lúc cập nhật dist và đưa v vào deque. Khác BFS thường, cha có thể được thay nếu sau đó tìm thấy đường rẻ hơn. Sau khi deque xử lý xong, lần ngược cha từ đích rồi đảo đường đi. Độ phức tạp là <code class="i">O(V + E)</code>.
+    </div>
+    <div class="box trap"><b class="h">Phân biệt</b>
+      <ul><li>Mỗi bước tốn như nhau → BFS.</li><li>Giá cạnh chỉ 0/1 → 0–1 BFS.</li><li>Trọng số không âm bất kỳ → Dijkstra.</li></ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============== DFS ============== -->
+<section id="s-dfs" hidden>
+  <h2>DFS</h2>
+  <p class="lead">Đi sâu hết một nhánh rồi mới quay lại. Dùng để duyệt, đếm vùng liên thông, phát hiện chu trình. Không dùng để tìm đường ngắn nhất.</p>
+
+  <div class="card">
+    <span class="tag">Template 1</span>
+    <h3>DFS đồ thị (đệ quy, visited không bỏ)</h3>
+<script type="text/plain" data-title="DFSGraph.java">
+static List<Integer>[] adj;
+static boolean[] visited;
+
+static void dfs(int u) {
+    visited[u] = true;                    // đánh dấu khi VÀO đỉnh
+    for (int v : adj[u]) {
+        if (!visited[v]) dfs(v);
+    }
+    // KHÔNG đặt visited[u] = false. Chỉ duyệt, không backtrack.
+}
+
+// đếm thành phần liên thông
+int comps = 0;
+for (int i = 1; i <= n; i++)
+    if (!visited[i]) { comps++; dfs(i); }
+</script>
+  </div>
+
+  <div class="card">
+    <span class="tag">Template 2</span>
+    <h3>Flood fill trên lưới</h3>
+<script type="text/plain" data-title="FloodFill.java">
+static void fill(int x, int y) {
+    if (x < 0 || x >= N || y < 0 || y >= M) return;   // base case: ra ngoài biên
+    if (grid[x][y] != '1' || seen[x][y]) return;      // base case: không hợp lệ / đã thăm
+    seen[x][y] = true;
+    for (int k = 0; k < 4; k++) fill(x + dx[k], y + dy[k]);
+}
+
+int regions = 0, biggest = 0;
+for (int i = 0; i < N; i++)
+    for (int j = 0; j < M; j++)
+        if (grid[i][j] == '1' &amp;&amp; !seen[i][j]) { regions++; fill(i, j); }
+</script>
+    <div class="box tip"><b class="h">Mẹo</b>
+      <ul>
+        <li>Kiểu "kiểm tra ở đầu hàm" (như trên) gọn hơn kiểu "kiểm tra trước khi gọi". Chọn một kiểu và dùng nhất quán trong cả file.</li>
+        <li>Đếm kích thước vùng: cho hàm trả về <code class="i">int</code>, <code class="i">return 1 + tổng 4 hướng</code>.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <span class="tag">Template 3</span>
+    <h3>DFS không đệ quy (khi sợ tràn stack)</h3>
+    <p>Java mặc định tràn stack khoảng 10⁴–10⁵ tầng. Với lưới 1000×1000 đệ quy sẽ chết, dùng stack tường minh.</p>
+<script type="text/plain" data-title="DFSIterative.java">
+Deque<Integer> st = new ArrayDeque<>();
+st.push(start);
+visited[start] = true;                 // đánh dấu lúc push, giống BFS
+while (!st.isEmpty()) {
+    int u = st.pop();
+    for (int v : adj[u]) {
+        if (visited[v]) continue;
+        visited[v] = true;
+        st.push(v);
+    }
+}
+</script>
+    <div class="box trap"><b class="h">Lưu ý</b>
+      <ul>
+        <li>Bản này không bỏ visited được nên chỉ dùng để duyệt/đếm vùng, không dùng cho backtrack (cần đệ quy hoặc lưu thêm chỉ số).</li>
+        <li>Muốn nâng stack khi buộc dùng đệ quy sâu: <code class="i">new Thread(null, runnable, "", 1 &lt;&lt; 26).start();</code></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <span class="tag">So sánh</span>
+    <h3>DFS thường và DFS + backtrack khác nhau ở một dòng</h3>
+<script type="text/plain" data-title="so-sanh.java">
+// DFS duyệt: mỗi đỉnh thăm đúng 1 lần  -> O(V + E)
+void dfs(int u) {
+    visited[u] = true;
+    for (int v : adj[u]) if (!visited[v]) dfs(v);
+}
+
+// DFS backtrack: mỗi đỉnh có thể thăm nhiều lần, ở các đường khác nhau -> số đường, có thể mũ
+void dfs(int u) {
+    for (int v : adj[u]) {
+        if (visited[v]) continue;
+        visited[v] = true;
+        dfs(v);
+        visited[v] = false;           // <-- dòng duy nhất khác
+    }
+}
+</script>
+  </div>
+</section>
+
+<!-- ============== ĐỆ QUY ============== -->
+<section id="s-dequy" hidden>
+  <h2>Đệ quy</h2>
+  <p class="lead">Mọi bài đệ quy chỉ cần trả lời ba câu: trạng thái hiện tại là gì (tham số), khi nào dừng (base case), và từ đây đi tiếp thế nào.</p>
+
+  <div class="card">
+    <span class="tag">Khung</span>
+    <h3>Ba phần cố định</h3>
+<script type="text/plain" data-title="khung.java">
+ret solve(trạng_thái) {
+    if (trạng_thái_hỏng)    return GIÁ_TRỊ_LOẠI;   // 1. cắt nhánh / ra ngoài biên
+    if (trạng_thái_cuối)    return GIÁ_TRỊ_ĐÁY;    // 2. base case
+    // 3. thử mọi lựa chọn, gộp kết quả (max / min / cộng)
+    ret best = GIÁ_TRỊ_LOẠI;
+    for (lựa chọn : tất_cả) best = gộp(best, solve(trạng_thái_mới));
+    return best;
+}
+</script>
+    <div class="grid2">
+      <div class="box tip"><b class="h">Cách 1: trả về giá trị</b>
+        Hàm trả về đáp án của bài toán con. Hợp với DP / memo (RollABall).
+      </div>
+      <div class="box tip"><b class="h">Cách 2: cập nhật biến toàn cục</b>
+        Hàm <code class="i">void</code>, dùng <code class="i">best</code> / <code class="i">count</code> static, so sánh ở base case. Hợp với backtrack (ValidPath, PickLargestSum).
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <span class="tag">Sửa lại</span>
+    <h3>RollABall: đệ quy + memo (bản đúng)</h3>
+    <p>Bóng đi xuống 3 hướng (chéo trái, thẳng, chéo phải), lấy tổng lớn nhất. Ba chỗ bản cũ sai: không có base case ở đáy, ra ngoài biên mà vẫn đọc <code class="i">a[i][j]</code>, và khởi tạo <code class="i">ans = MIN_VALUE</code> rồi dùng <code class="i">min</code>.</p>
+<script type="text/plain" data-title="RollABall.java">
+static final int NEG = -1_000_000_000;      // "đường này không dùng được"
+static int n, m;
+static int[][] a, memo;
+
+static int solve(int i, int j) {
+    if (j < 0 || j >= m) return NEG;         // ra ngoài biên: loại, KHÔNG đọc a[i][j]
+    if (i == n) return 0;                    // vượt hàng cuối: đáy
+    if (memo[i][j] != Integer.MIN_VALUE) return memo[i][j];   // đã tính rồi
+
+    int best = Math.max(solve(i + 1, j - 1),
+               Math.max(solve(i + 1, j), solve(i + 1, j + 1)));
+    return memo[i][j] = a[i][j] + best;
+}
+
+// main
+memo = new int[n][m];
+for (int[] row : memo) Arrays.fill(row, Integer.MIN_VALUE);
+int ans = Integer.MIN_VALUE;
+for (int j = 0; j < m; j++) ans = Math.max(ans, solve(0, j));   // MAX, không phải min
+System.out.println(ans);                                         // KHÔNG dùng bw.write(int)
+</script>
+    <div class="box trap"><b class="h">Bẫy</b>
+      <ul>
+        <li><code class="i">BufferedWriter.write(int)</code> ghi <b>một ký tự có mã đó</b>, không ghi số. Dùng <code class="i">bw.write(String.valueOf(ans))</code> hoặc <code class="i">System.out.println</code>.</li>
+        <li>Không có memo thì độ phức tạp 3ⁿ: n = 30 đã không chạy nổi.</li>
+        <li>Giá trị loại (<code class="i">NEG</code>) phải đủ nhỏ nhưng không tràn khi cộng: dùng -10⁹, đừng dùng <code class="i">Integer.MIN_VALUE</code> rồi cộng.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <span class="tag">Dấu hiệu</span>
+    <h3>Khi nào thêm memo</h3>
+    <div class="box tip"><b class="h">Quy tắc</b>
+      <ul>
+        <li>Cùng tham số được gọi lại nhiều lần và <b>kết quả chỉ phụ thuộc tham số</b> (không phụ thuộc đường đã đi) → memo / DP.</li>
+        <li>Kết quả phụ thuộc cả đường đã đi (cột đã chọn, đỉnh đã thăm) → backtrack, hoặc DP bitmask nếu số lựa chọn ≤ ~20.</li>
+        <li>Racing (thay lốp) thuộc loại thứ nhất: <code class="i">Try(pos, d, sum)</code> chỉ cần <code class="i">minCost[pos]</code>, nên chuyển được sang DP O(N²).</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============== BACKTRACK ============== -->
+<section id="s-backtrack" hidden>
+  <h2>DFS + Backtrack</h2>
+  <p class="lead">Tập trung vào các bài tổ hợp đơn giản trong Practice: mỗi lời giải là một đường chọn lựa, base case ghi nhận kết quả, rồi hoàn tác để thử nhánh kế tiếp. Không dùng backtracking thay BFS khi đề hỏi đường đi ngắn nhất.</p>
+
+  <div class="card">
+    <span class="tag">Khung chung</span>
+    <h3>Chọn → Đệ quy → Hoàn tác</h3>
+<script type="text/plain" data-title="backtrack.java">
+static void dfs(int u) {
+    if (đã_đủ_điều_kiện) {
+        // ghi nhận một nghiệm / cập nhật đáp án
+        return;
+    }
+    for (int v : các_lựa_chọn_từ_u) {
+        if (visited[v]) continue;       // nếu cần đường đơn
+        visited[v] = true;             // chọn
+        dfs(v);                         // đi sâu
+        visited[v] = false;            // hoàn tác
+    }
+}
+</script>
+  </div>
+
+  <div class="card">
+    <span class="tag">LeetCode · Permutations</span>
+    <h3>Sinh hoán vị: mỗi phần tử dùng một lần, thứ tự quan trọng</h3>
+    <p>Hoán vị khác nhau nếu thứ tự khác nhau: <code class="i">[1,2,3]</code> và <code class="i">[2,1,3]</code> là hai kết quả. Ở mỗi vị trí, thử mọi phần tử chưa dùng; dùng <code class="i">used[]</code> để nhớ phần tử đã nằm trong đường hiện tại.</p>
+<script type="text/plain" data-title="Permutations.java — các giá trị đầu vào phân biệt">
+static List<List<Integer>> result = new ArrayList<>();
+static List<Integer> path = new ArrayList<>();
+static boolean[] used;
+
+static void permute(int[] nums) {
+    if (path.size() == nums.length) {
+        result.add(new ArrayList<>(path)); // lưu bản sao, không lưu path đang sửa
+        return;
+    }
+    for (int i = 0; i < nums.length; i++) {
+        if (used[i]) continue;
+        used[i] = true;
+        path.add(nums[i]);
+        permute(nums);
+        path.remove(path.size() - 1);     // hoàn tác theo thứ tự ngược
+        used[i] = false;
+    }
+}
+</script>
+    <div class="box tip"><b class="h">Nếu đầu vào có giá trị trùng nhau</b>
+      Sắp xếp trước, rồi bỏ qua bản sao ở cùng tầng đệ quy bằng điều kiện dưới đây. <code class="i">!used[i - 1]</code> nghĩa là phần tử bằng nó chưa được chọn trong nhánh hiện tại, nên chọn bản sao này sẽ tạo cùng một tiền tố.
+<div class="codebox"><pre><code>if (i &gt; 0 &amp;&amp; nums[i] == nums[i - 1] &amp;&amp; !used[i - 1]) continue;</code></pre></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <span class="tag">LeetCode · Combinations</span>
+    <h3>Sinh tổ hợp: chọn k phần tử, thứ tự không quan trọng</h3>
+    <p><code class="i">[1,2]</code> và <code class="i">[2,1]</code> là cùng một tổ hợp. Quy ước tăng chỉ số lựa chọn: sau khi chọn i, đệ quy từ <code class="i">i + 1</code>. Nhờ vậy không cần <code class="i">used[]</code> và không sinh hoán vị trùng.</p>
+<script type="text/plain" data-title="Combinations.java — chọn k số trong 1..n">
+static List<List<Integer>> result = new ArrayList<>();
+static List<Integer> path = new ArrayList<>();
+
+static void combine(int start, int n, int k) {
+    if (path.size() == k) {
+        result.add(new ArrayList<>(path));
+        return;
+    }
+    // Cắt vòng lặp khi không còn đủ số để chọn cho đủ k phần tử.
+    int last = n - (k - path.size()) + 1;
+    for (int x = start; x &lt;= last; x++) {
+        path.add(x);
+        combine(x + 1, n, k);            // chỉ chọn phần tử đứng sau x
+        path.remove(path.size() - 1);
+    }
+}
+</script>
+    <p>Ví dụ <code class="i">n = 3, k = 2</code>: kết quả là <code class="i">[1,2], [1,3], [2,3]</code>. Không sinh <code class="i">[2,1]</code> vì đó là cùng một tập phần tử.</p>
+    <div class="box tip"><b class="h">Nhớ hai quy tắc</b>
+      Hoán vị: mỗi tầng bắt đầu thử từ đầu danh sách và loại phần tử đang dùng bằng <code class="i">used[]</code>. Tổ hợp: mỗi tầng chỉ thử từ <code class="i">start</code> trở đi, nên chỉ sinh một thứ tự cho mỗi tập.
+    </div>
+  </div>
+
+  <div class="card">
+    <span class="tag">Không trùng kết quả</span>
+    <h3>Phân biệt trùng vị trí với trùng giá trị</h3>
+    <div class="tbl"><table>
+      <tr><th>Bài / mục tiêu</th><th>Chuyển chỉ số khi đệ quy</th><th>Để tránh lặp</th></tr>
+      <tr><td>Hoán vị (LC 46); hoán vị duy nhất (LC 47)</td><td>Thử mọi index mỗi tầng</td><td><code class="i">used[i]</code>; nếu có giá trị trùng thì sort + bỏ bản sao cùng tầng.</td></tr>
+      <tr><td>Tổ hợp chọn k (LC 77)</td><td><code class="i">dfs(i + 1)</code></td><td>Chỉ đi chỉ số tăng dần; không tạo thứ tự đảo.</td></tr>
+      <tr><td>Combination Sum (LC 39, Practice/CombinationSum.java)</td><td><code class="i">dfs(i)</code></td><td>Cho dùng lại chính candidate i; bắt đầu từ i để không sinh các hoán vị của cùng nhóm số.</td></tr>
+      <tr><td>Combination Sum II (LC 40, Practice/CombinationSum2.java)</td><td><code class="i">dfs(i + 1)</code></td><td>Mỗi vị trí dùng tối đa một lần; sort rồi bỏ <code class="i">i &gt; start &amp;&amp; a[i] == a[i-1]</code>.</td></tr>
+    </table></div>
+    <div class="box trap"><b class="h">Bẫy hay gặp</b>
+      Nếu loại trùng bằng <code class="i">i &gt; 0</code> thay vì <code class="i">i &gt; start</code>, có thể bỏ nhầm một số hợp lệ ở tầng sâu. Điều kiện bỏ bản sao chỉ áp dụng cho các lựa chọn ngang hàng trong cùng một vòng lặp.
+    </div>
+  </div>
+
+  <div class="card">
+    <span class="tag">Các bài Practice cùng mẫu</span>
+    <h3>Thay đổi lựa chọn và điều kiện dừng</h3>
+    <div class="tbl"><table>
+      <tr><th>Bài</th><th>Đường đi hiện tại</th><th>Điều kiện / ràng buộc chính</th></tr>
+      <tr><td>PhoneNumber (LC 17)</td><td>Chuỗi ký tự</td><td>Mỗi chữ số chọn một chữ cái; dừng khi độ dài bằng số chữ số.</td></tr>
+      <tr><td>GenerateParentheses (LC 22)</td><td>Chuỗi ngoặc</td><td>Chỉ thêm <code class="i">(</code> nếu chưa đủ n; thêm <code class="i">)</code> khi <code class="i">close &lt; open</code>. Trong source, hàm backtrack có sẵn nhưng method public còn trả <code class="i">null</code>.</td></tr>
+      <tr><td>RestoreIPAddresses (LC 93)</td><td>Tối đa 4 đoạn</td><td>Mỗi đoạn dài 1–3, giá trị ≤255, không có số 0 ở đầu.</td></tr>
+      <tr><td>NQueensII (LC 52)</td><td>Mỗi hàng chọn một cột</td><td>Dùng mảng đánh dấu cột và hai đường chéo; chọn rồi hoàn tác cả ba.</td></tr>
+    </table></div>
+    <p>Mẫu chung vẫn là: kiểm tra base case, thử lựa chọn hợp lệ, thêm vào path, gọi đệ quy, rồi bỏ phần tử cuối. Khi lưu kết quả, luôn tạo bản sao của path.</p>
+  </div>
+
+  <div class="card">
+    <span class="tag">Nhớ nhanh</span>
+    <h3>Hai kiểu đánh dấu khác nhau</h3>
+    <div class="grid2">
+      <div class="box tip"><b class="h">BFS / flood fill</b>Đánh dấu khi thêm vào queue và giữ nguyên. Ta muốn mỗi đỉnh/trạng thái được xử lý một lần.</div>
+      <div class="box trap"><b class="h">Backtracking</b>Đánh dấu trước khi gọi đệ quy và bỏ đánh dấu sau khi quay lui. Ta muốn thử các nhánh khác nhau.</div>
+    </div>
+    <p>Bài liên hệ để nhận ra mẫu: ValidPath đếm đường đơn; PickLargestSum chọn cột không lặp; NQueens thêm kiểm tra cột và hai đường chéo. Chỉ cần nắm việc chọn–đệ quy–hoàn tác và base case.</p>
+  </div>
+</section>
+
+<!-- ============== ĐỒ THỊ ============== -->
+<section id="s-dothi" hidden>
+  <h2>Đồ thị</h2>
+  <p class="lead">Cách lưu đồ thị, đọc input, và các câu hỏi thường gặp. Ba thuật toán ở các tab trước đều chạy trên cấu trúc này.</p>
+
+  <div class="card">
+    <span class="tag">Lưu trữ</span>
+    <h3>Danh sách kề (dùng gần như luôn)</h3>
+<script type="text/plain" data-title="Graph.java">
+static List<Integer>[] adj;                          // không trọng số
+adj = new ArrayList[n + 1];                          // đánh số 1..n -> kích thước n + 1
+for (int i = 1; i <= n; i++) adj[i] = new ArrayList<>();
+for (int i = 0; i < m; i++) {
+    st = new StringTokenizer(br.readLine());
+    int u = Integer.parseInt(st.nextToken());
+    int v = Integer.parseInt(st.nextToken());
+    adj[u].add(v);
+    adj[v].add(u);                                   // vô hướng: thêm CẢ HAI chiều
+}
+
+// Có trọng số
+static class Edge { int to, weight; Edge(int t, int w) { to = t; weight = w; } }
+static List<Edge>[] adj;
+adj[u].add(new Edge(v, w));
+adj[v].add(new Edge(u, w));                          // vô hướng
+</script>
+    <div class="box tip"><b class="h">Ma trận kề khi nào?</b>
+      <ul>
+        <li>n ≤ ~1000 và cần hỏi "u nối v không" nhiều lần: <code class="i">boolean[n+1][n+1]</code>.</li>
+        <li>Còn lại dùng danh sách kề. Ma trận kề cho BFS/DFS là O(n²).</li>
+      </ul>
+    </div>
+    <div class="box trap"><b class="h">Bẫy</b>
+      <ul>
+        <li>Quên thêm chiều ngược lại ở đồ thị vô hướng: BFS/DFS chạy mà không báo lỗi, chỉ ra sai đáp án.</li>
+        <li>Đỉnh đánh số từ 1 mà tạo mảng kích thước n: <code class="i">ArrayIndexOutOfBounds</code> ở đỉnh n. Luôn <code class="i">n + 1</code>.</li>
+        <li>Mảng cố định như <code class="i">visited = new boolean[50]</code> chỉ đúng khi biết chắc n &lt; 50. An toàn là <code class="i">new boolean[n + 1]</code>.</li>
+        <li>Generic array cảnh báo "unchecked" khi tạo <code class="i">new ArrayList[n+1]</code>. Bỏ qua được, không phải lỗi.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <span class="tag">Mô hình hóa</span>
+    <h3>Chọn đỉnh và cạnh trước khi code</h3>
+    <p>Đồ thị không nhất thiết được cho sẵn dưới dạng danh sách cạnh. Hãy quyết định: mỗi đối tượng nào là đỉnh, khi nào hai đối tượng nối nhau, và một lần đi qua cạnh tốn bao nhiêu bước.</p>
+    <div class="tbl"><table>
+      <tr><th>Bài / tình huống</th><th>Đỉnh</th><th>Cạnh</th><th>Ghi nhớ</th></tr>
+      <tr><td>Lưới</td><td>Mỗi ô đi được</td><td>Các ô kề nhau hợp lệ</td><td>Không cần dựng adj; sinh hàng xóm từ mảng hướng.</td></tr>
+      <tr><td>Teleport (ThirdAvenue)</td><td>Mỗi ô</td><td>Đi cạnh hoặc dịch chuyển giữa cùng chữ</td><td>Mỗi dịch chuyển tính một bước trong bài này.</td></tr>
+      <tr><td>Spy</td><td>Mỗi thiết bị</td><td>Nối nếu khoảng cách Manhattan ≤ 3</td><td>Đồ thị được tạo từ một quan hệ hình học.</td></tr>
+      <tr><td>Subway</td><td>Có thể chọn tuyến hoặc nhà ga</td><td>Hai tuyến nối nếu cùng phục vụ ga</td><td>Chọn kiểu đỉnh để khớp với đơn vị cần tối thiểu hóa: số lần đổi tuyến.</td></tr>
+      <tr><td>Mê cung với đúng K bước</td><td>(đỉnh, số bước đã dùng)</td><td>Mỗi cạnh chuyển từ lớp k sang k+1</td><td>Không giống đường ngắn nhất tới mọi nơi; Maze dùng DP theo lớp để giữ khả năng tới lại đỉnh ở bước khác.</td></tr>
+    </table></div>
+    <div class="box tip"><b class="h">Đồ thị có hướng / vô hướng</b>
+      <ul><li>Đường đi hai chiều: thêm cả <code class="i">u → v</code> và <code class="i">v → u</code>.</li><li>Chỉ đi một chiều: chỉ thêm cạnh theo hướng đề cho.</li><li>Đồ thị có thể không liên thông: BFS từ một đỉnh chỉ thăm thành phần chứa đỉnh đó.</li></ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <span class="tag">BFS trên đồ thị</span>
+    <h3>Đường đi ngắn nhất theo số cạnh</h3>
+    <p>Với cạnh đồng giá, BFS từ <code class="i">s</code> cho khoảng cách nhỏ nhất tới mọi đỉnh đạt được. Nếu cần số tuyến/chặng ít nhất, điều quan trọng là một lần chuyển trên đồ thị phải tương ứng đúng một đơn vị của đề.</p>
+<script type="text/plain" data-title="BFSGraphPath.java">
+int[] dist = new int[n + 1];
+int[] parent = new int[n + 1];
+Arrays.fill(dist, -1);
+Arrays.fill(parent, -1);
+Queue<Integer> q = new ArrayDeque<>();
+dist[start] = 0;
+q.offer(start);
+while (!q.isEmpty()) {
+    int u = q.poll();
+    for (int v : adj[u]) {
+        if (dist[v] != -1) continue;
+        dist[v] = dist[u] + 1;
+        parent[v] = u;
+        q.offer(v);
+    }
+}
+// dist[target] == -1: không tới được.
+// Ngược parent từ target về start để lấy một đường ngắn nhất.
+</script>
+    <div class="box trap"><b class="h">Bẫy</b>
+      <ul><li>Khởi tạo <code class="i">dist</code> bằng -1 để phân biệt chưa tới được với khoảng cách 0 ở đỉnh đầu.</li><li>Nếu cần đi đúng K bước, không được dùng mỗi <code class="i">visited[v]</code>: phải giữ lớp bước, ví dụ <code class="i">reachable[k][v]</code>.</li><li>Trong đồ thị đa cạnh, BFS vẫn đúng cho số cạnh; nếu các cạnh có chi phí khác nhau, chọn 0–1 BFS hoặc Dijkstra.</li></ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <span class="tag">State đồ thị</span>
+    <h3>Khi cạnh kế tiếp phụ thuộc lịch sử</h3>
+    <p>Trong Practice/ShortestPath, bộ ba <code class="i">(u,v,w)</code> liên tiếp có thể bị cấm. Chỉ lưu vị trí hiện tại <code class="i">v</code> là chưa đủ: tới v từ u khác với tới v từ một đỉnh khác. Mỗi trạng thái là cặp <code class="i">(u,v)</code>; chuyển sang <code class="i">(v,w)</code> nếu cạnh tồn tại và bộ ba không bị cấm.</p>
+    <div class="box tip"><b class="h">Quy tắc tổng quát</b>
+      State phải giữ đủ lịch sử để xác định toàn bộ bước hợp lệ tiếp theo. Sau đó, BFS thông thường chạy trên đồ thị trạng thái này và cha cũng cần lưu theo state để dựng lại đường đi.
+    </div>
+  </div>
+
+  <div class="card">
+    <span class="tag">Câu hỏi 1</span>
+    <h3>Hai đỉnh có nối được không / có bao nhiêu thành phần?</h3>
+    <p>DFS hoặc BFS với <code class="i">visited</code> không bỏ, xem Template 1 ở tab DFS. Mỗi lần gặp một đỉnh chưa thăm là gặp một thành phần mới.</p>
+  </div>
+
+  <div class="card">
+    <span class="tag">Câu hỏi 2</span>
+    <h3>Có chu trình không (vô hướng)?</h3>
+<script type="text/plain" data-title="HasCycle.java">
+static boolean hasCycle(int u, int parent) {
+    visited[u] = true;
+    for (int v : adj[u]) {
+        if (v == parent) continue;                   // đừng tính cạnh vừa đi tới
+        if (visited[v]) return true;                 // gặp đỉnh đã thăm không phải cha
+        if (hasCycle(v, u)) return true;
+    }
+    return false;
+}
+</script>
+    <div class="box trap"><b class="h">Bẫy</b>
+      <ul>
+        <li>Cách này đúng cho duyệt toàn đồ thị (visited không bỏ). Muốn <b>đo độ dài</b> chu trình thì phải theo Mẫu D ở tab Backtrack.</li>
+        <li>Đồ thị có hướng cần thêm trạng thái "đang trên đường" (0/1/2), không dùng được kiểm tra cha.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <span class="tag">Câu hỏi 3</span>
+    <h3>Đi qua nhiều điểm đặc biệt nhất, ít bước nhất (MinsuTourism)</h3>
+    <p>Phân biệt rõ trước khi code: được đi lại đỉnh (walk) hay chỉ đi mỗi đỉnh một lần (đường đơn)? Với đường đơn dùng backtrack; với walk, thường là bài khác (BFS trên trạng thái <code class="i">(đỉnh, tập điểm đã thăm)</code>).</p>
+<script type="text/plain" data-title="Tourism.java">
+static void dfs(int u, int count, int steps) {
+    if (count > bestCount || (count == bestCount &amp;&amp; steps < bestSteps)) {
+        bestCount = count; bestSteps = steps;        // cập nhật ở MỌI đỉnh, không chỉ đáy
+    }
+    for (int v : adj[u]) {
+        if (visited[v]) continue;
+        visited[v] = true;
+        dfs(v, count + (isSight[v] ? 1 : 0), steps + 1);
+        visited[v] = false;
+    }
+}
+// bestCount = 0, bestSteps = 0 trước mỗi test; visited[1] = true.
+// Đỉnh 1 là điểm du lịch thì có tính không? Đọc đề.
+// Dòng điểm du lịch: dùng StringTokenizer thay vì split(" ") để khỏi lỗi khoảng trắng thừa.
+</script>
+  </div>
+
+  <div class="card">
+    <span class="tag">Đường ngắn nhất</span>
+    <h3>Dijkstra (khi cạnh có trọng số bất kỳ ≥ 0)</h3>
+<script type="text/plain" data-title="Dijkstra.java">
+long[] dist = new long[n + 1];
+Arrays.fill(dist, Long.MAX_VALUE);
+PriorityQueue<long[]> pq = new PriorityQueue<>((x, y) -> Long.compare(x[1], y[1]));
+dist[s] = 0;
+pq.offer(new long[]{s, 0});
+while (!pq.isEmpty()) {
+    long[] cur = pq.poll();
+    int u = (int) cur[0];
+    if (cur[1] > dist[u]) continue;                  // bản cũ, bỏ
+    for (Edge e : adj[u]) {
+        long nd = dist[u] + e.weight;
+        if (nd < dist[e.to]) {
+            dist[e.to] = nd;
+            pq.offer(new long[]{e.to, nd});
+        }
+    }
+}
+</script>
+  </div>
+</section>
+
+<!-- ============== MẸO ============== -->
+<section id="s-meo" hidden>
+  <h2>Mẹo thi và lỗi hay mất điểm</h2>
+  <p class="lead">Phần lớn điểm mất không vì thuật toán sai mà vì input/output và khởi tạo. Đọc lại phần này 5 phút trước khi vào thi.</p>
+
+  <div class="card">
+    <span class="tag">Input / Output</span>
+    <h3>Khung main nhiều test case</h3>
+<script type="text/plain" data-title="Main.java">
+import java.io.*;
+import java.util.*;
+
+public class Main {
+    public static void main(String[] args) throws Exception {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        int T = Integer.parseInt(br.readLine().trim());
+        StringBuilder out = new StringBuilder();
+        for (int tc = 1; tc <= T; tc++) {
+            StringTokenizer st = new StringTokenizer(br.readLine());
+            int N = Integer.parseInt(st.nextToken());
+            int M = Integer.parseInt(st.nextToken());
+            // ... đọc dữ liệu, KHỞI TẠO LẠI mọi mảng / biến static ở đây ...
+            int ans = 0;
+            out.append("#").append(tc).append(" ").append(ans).append("\n");
+        }
+        System.out.print(out);
+    }
+}
+</script>
+    <div class="box trap"><b class="h">Mất điểm vì</b>
+      <ul>
+        <li><b>Định dạng đầu ra</b> khác đề: <code class="i">#1 5</code> hay <code class="i">Case #1: 5</code>? Trong thư mục này đang lẫn cả hai kiểu. Chép đúng từ đề.</li>
+        <li><code class="i">BufferedWriter.write(int)</code> in ký tự, không in số.</li>
+        <li>Không reset biến <code class="i">static</code> giữa các test: <code class="i">best</code>, <code class="i">count</code>, <code class="i">visited</code>.</li>
+        <li><code class="i">split(" ")</code> lỗi khi có nhiều khoảng trắng hoặc dòng rỗng. Dùng <code class="i">StringTokenizer</code>, và bỏ qua dòng rỗng như <code class="i">readNonEmptyLine()</code> trong Excalibur nếu input không sạch.</li>
+        <li>Tọa độ 1-indexed trong đề mà code 0-indexed.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <span class="tag">Đọc đề</span>
+    <h3>Năm câu hỏi trước khi gõ code</h3>
+    <div class="box tip"><b class="h">Tự hỏi</b>
+      <ul>
+        <li><b>Đếm gì / tối ưu gì?</b> Số bước, số cách, tổng lớn nhất? "Nhỏ hơn" hay "không quá"?</li>
+        <li><b>Giới hạn</b> N, M, K, D bao nhiêu? Quyết định BFS hay backtrack, memo hay không.</li>
+        <li><b>Có thể đi lại</b> ô/đỉnh đã đi không? (đường đơn hay walk)</li>
+        <li><b>Không có đáp án</b> thì in gì? (-1, 0, hay "impossible")</li>
+        <li><b>Ô xuất phát / ô đích đặc biệt</b> không? Start trùng đích, start đứng trên vật phẩm, nhiều đích?</li>
+      </ul>
+    </div>
+    <p>Điều gì đề không nói rõ thì chọn cách hiểu hợp lý nhất, ghi một dòng comment phía trên hàm. Ban giám khảo thường tha lỗi hiểu đề khi giả định được nêu rõ.</p>
+  </div>
+
+  <div class="card">
+    <span class="tag">Gỡ lỗi</span>
+    <h3>Bug thường gặp, tra nhanh</h3>
+    <div class="tbl"><table>
+      <tr><th>Triệu chứng</th><th>Nguyên nhân hay gặp</th></tr>
+      <tr><td>BFS ra đáp án to hơn đúng</td><td>Đánh dấu visited lúc poll; quên state; <code class="i">dist</code> không fill -1</td></tr>
+      <tr><td>BFS luôn ra -1</td><td>Quên <code class="i">dist[start] = 0</code>; tường/ký tự đọc sai; index 1 vs 0</td></tr>
+      <tr><td>Backtrack ra đáp án thiếu</td><td>Không hoàn tác visited; <code class="i">return</code> chen giữa; cắt nhánh <code class="i">&gt;=</code> thay vì <code class="i">&gt;</code> khi cần cả đường bằng nhau</td></tr>
+      <tr><td>Backtrack ra đáp án thừa</td><td>Hoàn tác sai chỗ (trong vòng for thay vì sau lệnh đệ quy); đếm trùng khi hai đỉnh nối nhau 2 chiều</td></tr>
+      <tr><td>StackOverflowError</td><td>Thiếu base case; DFS trên lưới lớn → dùng BFS hoặc stack tường minh</td></tr>
+      <tr><td>ArrayIndexOutOfBounds</td><td>Mảng kích thước n thay vì n+1; kiểm tra biên đặt sau khi đã đọc <code class="i">map[nx][ny]</code></td></tr>
+      <tr><td>Time limit</td><td>Backtrack không cắt nhánh; thiếu memo; dùng <code class="i">Scanner</code> thay vì <code class="i">BufferedReader</code>; <code class="i">System.out.println</code> trong vòng lặp lớn</td></tr>
+    </table></div>
+  </div>
+
+  <div class="card">
+    <span class="tag">Nhận xét về code cũ</span>
+    <h3>Các lỗi đã tìm thấy trong thư mục dsa</h3>
+    <div class="tbl"><table>
+      <tr><th>File</th><th>Lỗi</th></tr>
+      <tr><td>RollABall</td><td>Thiếu base case đáy; đọc <code class="i">a[i][j]</code> khi j ngoài biên; dùng <code class="i">min</code> thay vì <code class="i">max</code>; <code class="i">bw.write(int)</code></td></tr>
+      <tr><td>Merchant</td><td>Profit bị ghi đè thay vì cộng; <code class="i">return</code> khi giá &lt; 0 bỏ luôn nhánh sản xuất</td></tr>
+      <tr><td>ValidPath</td><td><code class="i">&lt;=</code> trong khi đề là "nhỏ hơn"; <code class="i">visited[50]</code> cố định</td></tr>
+      <tr><td>FindLargestCycle</td><td>Comment nói "thành phần liên thông" nhưng code tìm chu trình; chỉ chạy từ đỉnh 1</td></tr>
+      <tr><td>LeavingOffice3DimArr</td><td>Không nhặt chìa khi ô xuất phát là <code class="i">'a'</code></td></tr>
+      <tr><td>OrigamiFoldRight</td><td><code class="i">bw.write(int)</code>; không in <code class="i">#t</code>; <code class="i">best</code> khởi tạo khác Origami</td></tr>
+      <tr><td>Coloring</td><td>Không xử lý ô chỉ có 0–1 hàng xóm (khi N hoặc M bằng 1)</td></tr>
+      <tr><td>MinsuTourism</td><td>Đề không nói rõ đường đơn; <code class="i">split(" ")</code> dễ lỗi; biến <code class="i">k</code> không dùng</td></tr>
+      <tr><td>Unicorn</td><td>Start trùng đích → -1; hiệu hai BFS vô nghĩa nếu một bên -1</td></tr>
+    </table></div>
+  </div>
+</section>
+
+</div>
+
+<script>
+(function () {
+  var ids = ["chon", "bfs", "dfs", "dequy", "backtrack", "dothi", "meo"];
+  var KW = /\b(static|int|long|boolean|char|void|return|if|else|for|while|new|continue|break|class|final|import|public|private|true|false|null)\b/g;
+
+  function esc(s) { return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+
+  function highlight(src) {
+    return src.split("\n").map(function (line) {
+      var idx = line.indexOf("//");
+      var code = idx >= 0 ? line.slice(0, idx) : line;
+      var cmt = idx >= 0 ? line.slice(idx) : "";
+      var h = esc(code)
+        .replace(KW, '<span class="k">$1</span>')
+        .replace(/\b(\d[\d_]*)\b/g, '<span class="n">$1</span>');
+      return h + (cmt ? '<span class="c">' + esc(cmt) + "</span>" : "");
+    }).join("\n");
+  }
+
+  function decode(s) {
+    var t = document.createElement("textarea");
+    t.innerHTML = s;
+    return t.value;
+  }
+
+  document.querySelectorAll('script[type="text/plain"]').forEach(function (el) {
+    var raw = decode(el.textContent.replace(/^\n/, "").replace(/\s+$/, ""));
+    var box = document.createElement("div");
+    box.className = "codebox";
+    var title = el.getAttribute("data-title");
+    if (title) {
+      var tt = document.createElement("div");
+      tt.className = "ttl";
+      tt.textContent = title;
+      box.appendChild(tt);
+    }
+    var pre = document.createElement("pre");
+    var code = document.createElement("code");
+    code.innerHTML = highlight(raw);
+    pre.appendChild(code);
+    pre.tabIndex = 0;
+    box.appendChild(pre);
+    var btn = document.createElement("button");
+    btn.className = "copy";
+    btn.type = "button";
+    btn.textContent = "Chép";
+    btn.addEventListener("click", function () {
+      function ok() { btn.textContent = "Đã chép"; setTimeout(function () { btn.textContent = "Chép"; }, 1400); }
+      function fallback() {
+        var r = document.createRange();
+        r.selectNodeContents(code);
+        var sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(r);
+        btn.textContent = "Ctrl+C";
+      }
+      try {
+        navigator.clipboard.writeText(raw).then(ok, fallback);
+      } catch (e) { fallback(); }
+    });
+    box.appendChild(btn);
+    el.parentNode.replaceChild(box, el);
+  });
+
+  function show() {
+    var h = (location.hash || "").replace("#", "");
+    if (ids.indexOf(h) < 0) h = "chon";
+    ids.forEach(function (id) {
+      document.getElementById("s-" + id).hidden = id !== h;
+    });
+    document.querySelectorAll("#tabs a").forEach(function (a) {
+      a.setAttribute("aria-current", a.getAttribute("data-t") === h ? "true" : "false");
+    });
+    window.scrollTo(0, 0);
+  }
+  window.addEventListener("hashchange", show);
+  show();
+})();
+</script>
+
+</body></html>
