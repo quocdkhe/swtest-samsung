@@ -69,15 +69,19 @@ public class NQueensProblem {
 
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        N = Integer.parseInt(br.readLine());
-        // pos = new int[N]; // cột của quân ở hàng thứ r
-        // System.out.println(place(0, N, pos));
+        int T = Integer.parseInt(br.readLine());
+        for(int tc = 1; tc <= T; tc++) {
+        	 N = Integer.parseInt(br.readLine());
+             // pos = new int[N]; // cột của quân ở hàng thứ r
+             // System.out.println(place(0, N, pos));
 
-        colUsed = new boolean[N];
-        diag1Used = new boolean[2 * N - 1];
-        diag2Used = new boolean[2 * N - 1];
-        int result = place(0);
-        System.out.println(result);
+             colUsed = new boolean[N];
+             diag1Used = new boolean[2 * N - 1];
+             diag2Used = new boolean[2 * N - 1];
+             int result = place(0);
+             System.out.printf("#%d %d\n",tc, result);
+        }
+       
     }
 
 }

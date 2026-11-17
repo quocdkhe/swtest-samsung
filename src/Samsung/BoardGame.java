@@ -111,7 +111,7 @@ public class BoardGame {
 	}
 	
 	public static void main(String[] args) throws Exception{
-		System.setIn(new FileInputStream("src/TC/BoardGameTC.txt"));
+//		System.setIn(new FileInputStream("src/TC/BoardGameTC.txt"));
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		StringTokenizer st;
 	    int T = Integer.parseInt(br.readLine());
