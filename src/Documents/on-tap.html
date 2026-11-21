@@ -355,6 +355,172 @@ static int[] bfs(List<Integer>[] adj, int n, int start) {
   </div>
 
   <div class="card">
+    <span class="tag">BFS trạng thái · BOJ 16197</span>
+    <h3>Hai đồng xu: một hành động, hai vị trí</h3>
+    <p>Mỗi lần nhấn một hướng thì cả hai đồng xu cùng di chuyển. Vì vậy một node BFS phải lưu vị trí của <b>cả hai</b> đồng xu; không thể tìm đường riêng cho từng đồng.</p>
+<script type="text/plain" data-title="TwoCoins.java">
+static int[] dr = {-1, 1, 0, 0};
+static int[] dc = {0, 0, -1, 1};
+
+static class State {
+    int r1, c1, r2, c2, moves;
+    State(int r1, int c1, int r2, int c2, int moves) {
+        this.r1 = r1; this.c1 = c1;
+        this.r2 = r2; this.c2 = c2; this.moves = moves;
+    }
+}
+
+static int bfs(int r1, int c1, int r2, int c2) {
+    boolean[][][][] seen = new boolean[N][M][N][M];
+    Queue<State> q = new ArrayDeque<>();
+    q.offer(new State(r1, c1, r2, c2, 0));
+    seen[r1][c1][r2][c2] = true;
+
+    while (!q.isEmpty()) {
+        State cur = q.poll();
+        if (cur.moves == 10) continue;
+
+        for (int d = 0; d < 4; d++) {
+            int nr1 = cur.r1 + dr[d], nc1 = cur.c1 + dc[d];
+            int nr2 = cur.r2 + dr[d], nc2 = cur.c2 + dc[d];
+            boolean out1 = !inRange(nr1, nc1);
+            boolean out2 = !inRange(nr2, nc2);
+
+            if (out1 && out2) continue;             // cả hai rơi: không hợp lệ
+            if (out1 || out2) return cur.moves + 1; // đúng một đồng xu rơi
+
+            if (board[nr1][nc1] == '#') { nr1 = cur.r1; nc1 = cur.c1; }
+            if (board[nr2][nc2] == '#') { nr2 = cur.r2; nc2 = cur.c2; }
+            if (seen[nr1][nc1][nr2][nc2]) continue;
+
+            seen[nr1][nc1][nr2][nc2] = true;
+            q.offer(new State(nr1, nc1, nr2, nc2, cur.moves + 1));
+        }
+    }
+    return -1;
+}
+</script>
+    <div class="box trap"><b class="h">Bẫy</b>
+      <ul>
+        <li>Kiểm tra ra ngoài trước khi đọc ô tường; tọa độ có thể đang ngoài mảng.</li>
+        <li>Đánh dấu visited cho cả bốn tọa độ. Hai đồng xu được phép đứng cùng một ô.</li>
+        <li>Giới hạn 10 lần nhấn: không mở rộng trạng thái ở độ sâu 10.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <span class="tag">Multi-source đồng thời · BOJ 18809</span>
+    <h3>Vườn hoa: backtracking chọn nguồn, BFS xử lý va chạm</h3>
+    <p>Chọn đúng G ô làm nguồn xanh và R ô làm nguồn đỏ trong các ô đặt được. Với mỗi cách chọn, BFS lan theo từng giây. Gom các đề xuất đến ô trong cùng giây trước khi cập nhật để phát hiện hai màu cùng tới và tạo hoa.</p>
+<script type="text/plain" data-title="GardenBFS.java — phần xử lý từng giây">
+// state: 0 = chưa tới, 1 = xanh, 2 = đỏ, 3 = hoa.
+// Queue chứa các ô đang lan; mỗi node có màu.
+int flowers = 0;
+while (!q.isEmpty()) {
+    int size = q.size();
+    int[][] mask = new int[N][M]; // bit 1 xanh, bit 2 đỏ
+
+    for (int i = 0; i < size; i++) {
+        Node cur = q.poll();
+        if (state[cur.r][cur.c] == 3) continue;
+        int bit = cur.color == 1 ? 1 : 2;
+
+        for (int d = 0; d < 4; d++) {
+            int nr = cur.r + dr[d], nc = cur.c + dc[d];
+            if (!inRange(nr, nc) || garden[nr][nc] == 0) continue;
+            if (state[nr][nc] != 0) continue;
+            mask[nr][nc] |= bit;
+        }
+    }
+
+    // Chỉ cập nhật sau khi đã gom đề xuất của cả hai màu.
+    for (int r = 0; r < N; r++) for (int c = 0; c < M; c++) {
+        if (mask[r][c] == 0) continue;
+        if (mask[r][c] == 3) {
+            state[r][c] = 3;
+            flowers++;
+        } else {
+            state[r][c] = mask[r][c];
+            q.offer(new Node(r, c, state[r][c]));
+        }
+    }
+}
+return flowers;
+</script>
+    <div class="box tip"><b class="h">Tổ chức lời giải</b>
+      <ol>
+        <li>Backtracking phân G nguồn xanh và R nguồn đỏ vào các vị trí hợp lệ.</li>
+        <li>Mỗi cấu hình nguồn chạy một BFS mới, với state và queue mới.</li>
+        <li>Cập nhật đáp án lớn nhất bằng số hoa BFS trả về.</li>
+      </ol>
+    </div>
+    <div class="box trap"><b class="h">Bẫy</b>
+      <ul>
+        <li>Không chạy BFS xanh xong rồi mới chạy đỏ: phải mô phỏng cùng thời điểm.</li>
+        <li>Ô thành hoa không lan tiếp. Đánh dấu nguồn ban đầu trước khi BFS.</li>
+        <li>Hai pha gom mask rồi cập nhật giúp kết quả không phụ thuộc thứ tự queue.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <span class="tag">BFS theo lượt · BOJ 16920</span>
+    <h3>Expansion Game: queue riêng và giới hạn lớp mỗi lượt</h3>
+    <p>Mỗi người chơi giữ frontier trong queue riêng. Đến lượt người chơi i, mở rộng tối đa S[i] lớp; ô được chiếm ngay khi phát hiện để người chơi sau không thể chiếm lại.</p>
+<script type="text/plain" data-title="ExpansionGame.java">
+static Queue<int[]>[] queues; // chỉ số người chơi 1..P
+
+static void expandAllPlayers() {
+    boolean changed;
+    do {
+        changed = false;
+        for (int player = 1; player <= P; player++) {
+            Queue<int[]> q = queues[player];
+            for (int step = 0; step < speed[player] && !q.isEmpty(); step++) {
+                int size = q.size(); // đúng một lớp trong mỗi bước
+                for (int i = 0; i < size; i++) {
+                    int[] cur = q.poll();
+                    for (int d = 0; d < 4; d++) {
+                        int nr = cur[0] + dr[d], nc = cur[1] + dc[d];
+                        if (!inRange(nr, nc) || board[nr][nc] != '.') continue;
+                        board[nr][nc] = (char) ('0' + player); // chiếm ngay
+                        q.offer(new int[]{nr, nc});
+                        changed = true;
+                    }
+                }
+            }
+        }
+    } while (changed);
+}
+</script>
+    <div class="box tip"><b class="h">Khởi tạo và đếm</b>
+      Mỗi ô ban đầu thuộc người chơi i được đưa vào <code class="i">queues[i]</code>. Sau khi lan xong, quét bản đồ và đếm các ô mang ký tự của từng người chơi.
+    </div>
+    <div class="box trap"><b class="h">Bẫy</b>
+      <ul>
+        <li><code class="i">size = q.size()</code> phải lấy đầu mỗi lớp; nếu không giới hạn bước sẽ bị sai.</li>
+        <li>Thứ tự người chơi có ý nghĩa: lượt 1, 2, ..., P rồi lặp lại.</li>
+        <li>Lặp cả vòng cho tới khi không ai chiếm thêm ô nào.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <span class="tag">Tổng kết · ba pattern BFS</span>
+    <h3>Chọn state và cách tổ chức queue</h3>
+    <div class="tbl"><table>
+      <tr><th>Bài</th><th>State / queue</th><th>Câu hỏi thiết kế</th></tr>
+      <tr><td>16197 · Hai đồng xu</td><td>Vị trí của cả hai đồng xu; visited 4 chiều</td><td>Một hành động tác động đồng thời lên những đối tượng nào?</td></tr>
+      <tr><td>18809 · Vườn hoa</td><td>Ô + màu + thời điểm; gom va chạm theo từng lớp</td><td>Ai đến cùng lúc và trạng thái đó có dừng lan không?</td></tr>
+      <tr><td>16920 · Expansion Game</td><td>Queue frontier riêng cho từng người; lượt giới hạn S[i]</td><td>Mỗi người được mở rộng bao nhiêu lớp trước lượt kế?</td></tr>
+    </table></div>
+    <div class="box tip"><b class="h">Điểm chung</b>
+      BFS không chỉ là một queue và một mảng visited. Hãy xác định đầy đủ state, thời điểm cập nhật quyền chiếm ô, và các sự kiện xảy ra đồng thời trước khi viết vòng lặp.
+    </div>
+  </div>
+
+  <div class="card">
     <span class="tag">Nhận dạng bài đã làm</span>
     <h3>Chọn đúng biến thể BFS</h3>
     <div class="tbl"><table>

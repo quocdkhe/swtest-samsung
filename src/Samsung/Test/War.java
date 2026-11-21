@@ -1,8 +1,15 @@
-package Samsung;
+package Samsung.Test;
 
 import java.io.*;
 import java.util.*;
 
+/**
+ * Hai quốc gia A và B có mỗi bên một base trên đồ thị vô hướng. Mỗi ngày, mỗi
+ * bên chiếm các base trung lập kề với vùng mình đã chiếm. Base bị cả hai bên
+ * chiếm cùng ngày trở thành conflict và chặn việc lan truyền. Khi không bên
+ * nào lan tiếp được, in số base conflict và số base A cần thêm (có thể tính cả
+ * base conflict) để có nhiều base hơn B; nếu không thể thì in -1.
+ */
 public class War {
 
     static List<Integer>[] graph;
